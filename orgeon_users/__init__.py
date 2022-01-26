@@ -1,0 +1,1 @@
+default_app_config = 'orgeon_users.apps.OrgeonUsersConfig'
