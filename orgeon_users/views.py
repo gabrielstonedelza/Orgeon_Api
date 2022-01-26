@@ -4,7 +4,6 @@ from .serializers import UsersSerializer, ProfileSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
-from drf_multiple_model.views import ObjectMultipleModelAPIView
 
 
 @api_view(['GET'])
