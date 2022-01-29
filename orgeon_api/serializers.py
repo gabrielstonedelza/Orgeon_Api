@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Comments,Gallery,ContactUs,ClientInfoProgress,NotifyMe,Reviews,UsersCheckedIn
+from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Comments,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn
 
 class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,7 +15,6 @@ class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
         fields = ['id','partnership','name','email','phone','date_posted']
-
 
 class  NewsUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,9 +39,10 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ['id','author','username','title','message','views','has_read','need_replies','slug','date_posted']
+        read_only_fields = ['author']
 
     def get_username(self, user):
-        username = user.user.username
+        username = user.author.username
         return username
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -59,28 +59,19 @@ class GallerySerializer(serializers.ModelSerializer):
 
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ['id','name','email','phone','message','date_contacted']
+        model = ContactUs
+        fields = ['id','name','email','phone','message','date_contacted']
 
 class ClientInfoProgressSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField('get_username')
 
     class Meta:
         model = ClientInfoProgress
-        fields = ['id','care_plan','assessment_officer','name','age','email','phone','emergency_phone','gender','client_image','next_of_kin','issue','progress','assessment_phase_details','development_phase_details','planning_phase_details','implementation_phase_details','evaluation_phase_details','star_phase_details','slug','date_issued']
+        fields = ['id','care_plan','username','assessment_officer','name','age','email','phone','emergency_phone','gender','client_image','next_of_kin','issue','progress','assessment_phase_details','development_phase_details','planning_phase_details','implementation_phase_details','evaluation_phase_details','star_phase_details','slug','date_issued']
+        read_only_fields = ['assessment_officer']
 
     def get_username(self, user):
-        username = user.user.username
-        return username
-
-class NotificationSerializer(serializers.ModelSerializer):
-    username = serializers.SerializerMethodField('get_username')
-
-    class Meta:
-        model = NotifyMe
-        fields = ['id','user','username','notify_title','notify_alert','post_slug','report_slug','comment_slug','sender_or_receiver','read','slug','date_notified']
-
-    def get_username(self, user):
-        username = user.user.username
+        username = user.assessment_officer.username
         return username
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -93,7 +84,8 @@ class UserCheckInSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UsersCheckedIn
-        fields = ['id','user','username','checked_in','check_date','has_checked_in','date_checked_in']
+        fields = ['id','user','username','check_date','date_checked_in']
+        read_only_fields = ['user']
 
     def get_username(self, user):
         username = user.user.username

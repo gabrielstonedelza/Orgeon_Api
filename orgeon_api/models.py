@@ -235,7 +235,6 @@ class Events(models.Model):
     theme = models.CharField(max_length=200)
     venue = models.CharField(max_length=150)
     date_of_event = models.DateField(default=timezone.now)
-    # event_started = models.BooleanField(default=False,)
     event_poster = models.ImageField(upload_to='event_pics', blank=True,
                                      validators=[FileExtensionValidator(allowed_extensions=['jpeg', 'jpg'])])
     description_of_event = models.TextField()
@@ -292,8 +291,7 @@ class Report(models.Model):
         return f"/{self.slug}/"
 
 class Post(models.Model):
-    author =  models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='blog_user')
+    author =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_user')
     title = models.CharField(max_length=200)
     message = models.TextField()
     views = models.IntegerField(default=0)
@@ -382,29 +380,6 @@ class ClientInfoProgress(models.Model):
     def get_absolute_url(self):
         return f"/{self.slug}/"
 
-class NotifyMe(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    notify_title = models.CharField(max_length=100, default="New Notification")
-    notify_alert = models.CharField(max_length=200,default="Alert from Orgeonofstars")
-    post_slug = models.CharField(max_length=100, blank=True)
-    report_slug = models.CharField(max_length=100, blank=True)
-    comment_slug = models.CharField(max_length=100, blank=True)
-    sender_or_receiver = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name="notification",blank=True)
-    read = models.BooleanField(default=False)
-    slug = models.SlugField(max_length=100, default='')
-    date_notified = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"New {self.notify_title} to {self.user.username}"
-
-    def get_absolute_url(self):
-        return f"/{self.slug}/"
-
-    def save(self, *args, **kwargs):
-        value = self.notify_title
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
-
 class Reviews(models.Model):
     review_content = models.TextField(max_length=400)
     ratings = models.IntegerField(choices=RATING_CHOICES, default=5)
@@ -416,8 +391,7 @@ class Reviews(models.Model):
 class UsersCheckedIn(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     checked_in = models.ManyToManyField(User,related_name="user_checking_in")
-    check_date = models.DateField()
-    has_checked_in = models.BooleanField(default=False)
+    check_date = models.DateField(auto_now_add=True)
     date_checked_in = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

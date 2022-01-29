@@ -24,9 +24,7 @@ urlpatterns = [
     path('add_client/',views.add_client),
     path('get_client_list/',views.get_post_list),
     path('update_client/<int:id>/',views.update_client),
-    path('add_comment/',views.add_comment),
-    path('get_comments_lists/',views.get_comments_lists),
     path('check_in/',views.check_in),
     path('get_check_in_lists/',views.get_check_in_lists),
-    path('get_notification_lists/',views.get_notification_lists),
+
 ]
