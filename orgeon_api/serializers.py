@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn
+from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn,Stories
 
 class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,12 +9,12 @@ class VolunteerSerializer(serializers.ModelSerializer):
 class EventsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Events
-        fields = ['id','theme','venue','date_of_event','event_poster','description_of_event','slug','date_posted']
+        fields = ['id','theme','venue','date_of_event','event_poster','description_of_event','get_event_poster','slug','date_posted']
 
 class PartnershipSerializer(serializers.ModelSerializer):
     class Meta:
         model = Partnership
-        fields = ['id','partnership','name','email','phone','date_posted']
+        fields = ['id','name','email','phone','date_posted']
 
 class  NewsUpdateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -70,7 +70,7 @@ class ClientInfoProgressSerializer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
-        fields = ['id','review_content','ratings','date_posted']
+        fields = ['id','name','review_content','ratings','date_posted']
 
 class UserCheckInSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField('get_username')
@@ -83,3 +83,8 @@ class UserCheckInSerializer(serializers.ModelSerializer):
     def get_username(self, user):
         username = user.user.username
         return username
+
+class StoriesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Stories
+        fields = ['id','youtube_link','date_posted']

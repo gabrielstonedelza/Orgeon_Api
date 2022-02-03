@@ -254,18 +254,18 @@ class Events(models.Model):
         self.slug = slugify(value, allow_unicode=True)
         super().save(*args, **kwargs)
 
-    def get_absolute_url(self):
-        return f"/{self.slug}/"
+    def get_event_poster(self):
+        if self.event_poster:
+            return "http://127.0.0.1:8000" + self.event_poster.url
 
 class Partnership(models.Model):
-    partnership = models.CharField(choices=PARTNERSHIP_TYPE, max_length=20)
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=40)
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"{self.partnership}"
+        return f"{self.name}"
 
 class NewsUpdate(models.Model):
     title = models.CharField(max_length=150)
@@ -373,12 +373,13 @@ class ClientInfoProgress(models.Model):
         return f"/{self.slug}/"
 
 class Reviews(models.Model):
+    name = models.CharField(max_length=100)
     review_content = models.TextField(max_length=400)
     ratings = models.IntegerField(choices=RATING_CHOICES, default=5)
     date_posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"New review posted"
+        return f"New review from {self.name}"
 
 class UsersCheckedIn(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -388,5 +389,12 @@ class UsersCheckedIn(models.Model):
 
     def __str__(self):
         return f"{self.user.username} just checked in "
+
+class Stories(models.Model):
+    youtube_link = models.CharField(max_length=350)
+    date_posted = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.youtube_link
 
 

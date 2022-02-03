@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 
-from .models import (Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn)
+from .models import (Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn,Stories)
 
-from .serializers import (VolunteerSerializer,EventsSerializer,PartnershipSerializer,NewsUpdateSerializer,ReportSerializer,PostSerializer,GallerySerializer,ContactUsSerializer,ClientInfoProgressSerializer,ReviewSerializer,UserCheckInSerializer)
+from .serializers import (VolunteerSerializer,EventsSerializer,PartnershipSerializer,NewsUpdateSerializer,ReportSerializer,PostSerializer,GallerySerializer,ContactUsSerializer,ClientInfoProgressSerializer,ReviewSerializer,UserCheckInSerializer,StoriesSerializer)
 
 from datetime import datetime,date,time,timedelta
 from rest_framework.decorators import api_view, permission_classes
@@ -47,7 +47,7 @@ def add_event(request):
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_events(request):
-    events = Events.objects.all().order_by('-date_posted')
+    events = Events.objects.all().order_by('-date_posted')[:1]
     serializer = EventsSerializer(events,many=True)
     return Response(serializer.data)
 
@@ -226,3 +226,19 @@ def update_client(request, id):
                      {"": ""}, "default_templates/client_update.html")
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def add_story(request):
+    serializer = StoriesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def get_stories(request):
+    stories = Stories.objects.all().order_by('-date_posted')
+    serializer = StoriesSerializer(stories,many=True)
+    return Response(serializer.data)

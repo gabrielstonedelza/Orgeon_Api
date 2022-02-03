@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn
+from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn,Stories
 
 admin.site.register(Volunteer)
 admin.site.register(Events)
@@ -13,3 +13,4 @@ admin.site.register(ContactUs)
 admin.site.register(ClientInfoProgress)
 admin.site.register(Reviews)
 admin.site.register(UsersCheckedIn)
+admin.site.register(Stories)
