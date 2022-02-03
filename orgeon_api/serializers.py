@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Comments,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn
+from .models import Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn
 
 class VolunteerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Volunteer
-        fields = ['id','name','email','profession','country','photo','phone','why_join_Orgeon','date_volunteered']
+        fields = ['id','name','email','profession','country','photo','phone','why_join_Orgeon','get_volunteer_photo','date_volunteered']
 
 class EventsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,17 +45,10 @@ class PostSerializer(serializers.ModelSerializer):
         username = user.author.username
         return username
 
-class CommentSerializer(serializers.ModelSerializer):
-    username = serializers.SerializerMethodField('get_username')
-
-    class Meta:
-        model = Comments
-        fields = ['id','user','username','post','comment','slug','date_posted']
-
 class GallerySerializer(serializers.ModelSerializer):
     class Meta:
         model = Gallery
-        fields = ['id','image_caption','image','date_posted']
+        fields = ['id','image_caption','image','get_gallery_item','date_posted']
 
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:

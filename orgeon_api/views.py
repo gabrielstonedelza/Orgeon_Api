@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 
-from .models import (Volunteer,Events,Partnership,NewsUpdate,Report,Post,Comments,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn)
+from .models import (Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn)
 
-from .serializers import (VolunteerSerializer,EventsSerializer,PartnershipSerializer,NewsUpdateSerializer,ReportSerializer,PostSerializer,CommentSerializer,GallerySerializer,ContactUsSerializer,ClientInfoProgressSerializer,ReviewSerializer,UserCheckInSerializer)
+from .serializers import (VolunteerSerializer,EventsSerializer,PartnershipSerializer,NewsUpdateSerializer,ReportSerializer,PostSerializer,GallerySerializer,ContactUsSerializer,ClientInfoProgressSerializer,ReviewSerializer,UserCheckInSerializer)
 
 from datetime import datetime,date,time,timedelta
 from rest_framework.decorators import api_view, permission_classes

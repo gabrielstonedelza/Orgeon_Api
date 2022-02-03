@@ -26,5 +26,4 @@ urlpatterns = [
     path('update_client/<int:id>/',views.update_client),
     path('check_in/',views.check_in),
     path('get_check_in_lists/',views.get_check_in_lists),
-
 ]

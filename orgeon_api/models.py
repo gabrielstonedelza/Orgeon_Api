@@ -222,7 +222,7 @@ class Volunteer(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     profession = models.CharField(max_length=100, blank=True)
-    country = models.CharField(max_length=50, choices=COUNTRY_OF_CHOICE, default="United States", blank=True)
+    country = models.CharField(max_length=50, default="United States", blank=True)
     photo = models.ImageField(upload_to="volunteer_photos", default="volunteer.jpg", blank=True)
     phone = models.CharField(max_length=40, blank=True)
     why_join_Orgeon = models.CharField(max_length=100, blank=True)
@@ -230,6 +230,11 @@ class Volunteer(models.Model):
 
     def __str__(self):
         return f"{self.name} has volunteered."
+
+    def get_volunteer_photo(self):
+        if self.photo:
+            return "http://127.0.0.1:8000" + self.photo.url
+        return ""
 
 class Events(models.Model):
     theme = models.CharField(max_length=200)
@@ -311,31 +316,18 @@ class Post(models.Model):
     def get_absolute_url(self):
         return f"/{self.slug}/"
 
-class Comments(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    comment = models.TextField(default='...')
-    slug = models.SlugField(max_length=100, default='')
-    date_posted = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} has commented on {self.post}"
-
-    def save(self, *args, **kwargs):
-        value = self.post.title
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return f"/{self.slug}/"
-
 class Gallery(models.Model):
     image_caption = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="galleries")
     date_posted = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.image_caption} "
+        return f"{self.image_caption}"
+
+    def get_gallery_item(self):
+        if self.image:
+            return "http://127.0.0.1:8000" + self.image.url
+        return ""
 
 class ContactUs(models.Model):
     name = models.CharField(max_length=50)
