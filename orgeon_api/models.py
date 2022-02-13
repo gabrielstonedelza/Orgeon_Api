@@ -216,6 +216,15 @@ RATING_CHOICES = (
 )
 supported_files = ["docx", "doc", "pdf", "txt", "odt", "rtf", "tex", "wpd", "ods ", "xls", "xlsm", "xlsx", "pptx",
                    "ppt", "pps", "odp"]
+NOTIFICATIONS_STATUS = (
+    ("Read", "Read"),
+    ("Not Read", "Not Read"),
+)
+
+NOTIFICATIONS_TRIGGERS = (
+    ("Triggered", "Triggered"),
+    ("Not Triggered", "Not Triggered"),
+)
 
 
 class Volunteer(models.Model):
@@ -277,19 +286,11 @@ class Report(models.Model):
     has_read = models.ManyToManyField(User, related_name="has_read_report", blank=True)
     report_doc = models.FileField(upload_to="report_documents", blank=True,
                                   validators=[FileExtensionValidator(allowed_extensions=supported_files)])
-    slug = models.SlugField(max_length=100, default='')
+    views = models.IntegerField(default=0)
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.user.username}'s report = {self.title}"
-
-    def save(self, *args, **kwargs):
-        value = self.title
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return f"/{self.slug}/"
 
 
 class Post(models.Model):
@@ -381,3 +382,27 @@ class UsersCheckedIn(models.Model):
 
     def __str__(self):
         return f"{self.user.username} just checked in "
+
+
+class Notifications(models.Model):
+    notification_id = models.CharField(max_length=100, blank=True, default="")
+    notification_tag = models.CharField(max_length=100, blank=True, default="")
+    notification_title = models.CharField(max_length=200, blank=True)
+    notification_message = models.TextField(blank=True)
+    read = models.CharField(max_length=20, choices=NOTIFICATIONS_STATUS, default="Not Read")
+    notification_trigger = models.CharField(max_length=100, choices=NOTIFICATIONS_TRIGGERS, default="Triggered",
+                                            blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name="User_receiving_notification", null=True)
+    volunteer_id = models.CharField(max_length=100, blank=True)
+    partner_id = models.CharField(max_length=100, blank=True)
+    contact_id = models.CharField(max_length=100, blank=True)
+    report_id = models.CharField(max_length=100, blank=True)
+    client_id = models.CharField(max_length=100, blank=True)
+    posts_id = models.CharField(max_length=100, blank=True)
+    checked_in_id = models.CharField(max_length=100, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.notification_title
+

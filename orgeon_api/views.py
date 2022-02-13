@@ -141,6 +141,18 @@ def get_report_list(request):
     return Response(serializer.data)
 
 
+# event detail
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def report_detail(request, id):
+    report = get_object_or_404(Report, id=id)
+    if report:
+        report.views += 1
+        report.save()
+    serializer = ReportSerializer(event, many=False)
+    return Response(serializer.data)
+
+
 # post and get post
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
@@ -211,4 +223,3 @@ def update_client(request, id):
                      {"": ""}, "default_templates/client_update.html")
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

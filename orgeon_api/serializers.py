@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress, \
-    UsersCheckedIn
+from .models import (Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress, \
+                     UsersCheckedIn, Notifications)
 
 
 class VolunteerSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ['id', 'user', 'username', 'title', 'report', 'has_read', 'report_doc', 'slug', 'date_posted']
+        fields = ['id', 'user', 'username', 'title', 'report', 'has_read', 'report_doc', 'views', 'date_posted']
         read_only_fields = ['user']
 
     def get_username(self, user):
@@ -90,3 +90,23 @@ class UserCheckInSerializer(serializers.ModelSerializer):
     def get_username(self, user):
         username = user.user.username
         return username
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField('get_username')
+    username2 = serializers.SerializerMethodField('get_username2')
+
+    class Meta:
+        model = Notifications
+        fields = ['id', 'notification_id', 'notification_title', 'notification_tag', 'notification_message', 'read', 'notification_trigger',
+                  'user', 'user2', 'username', 'username2', 'volunteer_id', 'partner_id', 'contact_id', 'report_id',
+                  'client_id', 'posts_id',
+                  'checked_in_id', 'date_created']
+
+    def get_username(self, user):
+        username = user.user.username
+        return username
+
+    def get_username2(self, user):
+        username2 = user.user2.username
+        return username2

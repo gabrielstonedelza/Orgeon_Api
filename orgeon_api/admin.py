@@ -1,7 +1,7 @@
 from django.contrib import admin
 
-from .models import Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress, \
-    UsersCheckedIn
+from .models import (Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress, \
+                     UsersCheckedIn, Notifications)
 
 admin.site.register(Volunteer)
 admin.site.register(Events)
@@ -12,4 +12,4 @@ admin.site.register(Gallery)
 admin.site.register(ContactUs)
 admin.site.register(ClientInfoProgress)
 admin.site.register(UsersCheckedIn)
-
+admin.site.register(Notifications)
