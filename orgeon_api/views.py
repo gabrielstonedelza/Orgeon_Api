@@ -1,19 +1,23 @@
 from django.shortcuts import get_object_or_404
 
-from .models import (Volunteer,Events,Partnership,NewsUpdate,Report,Post,Gallery,ContactUs,ClientInfoProgress,Reviews,UsersCheckedIn,Stories)
+from .models import (Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress,
+                     UsersCheckedIn)
 
-from .serializers import (VolunteerSerializer,EventsSerializer,PartnershipSerializer,NewsUpdateSerializer,ReportSerializer,PostSerializer,GallerySerializer,ContactUsSerializer,ClientInfoProgressSerializer,ReviewSerializer,UserCheckInSerializer,StoriesSerializer)
+from .serializers import (VolunteerSerializer, EventsSerializer, PartnershipSerializer,
+                          ReportSerializer, PostSerializer, GallerySerializer, ContactUsSerializer,
+                          ClientInfoProgressSerializer, UserCheckInSerializer)
 
-from datetime import datetime,date,time,timedelta
+from datetime import datetime, date, time, timedelta
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import viewsets, permissions, generics, status
 from rest_framework.response import Response
 
 from orgeon_users.serializers import ProfileSerializer
-from orgeon_users.models import User,Profile
+from orgeon_users.models import User, Profile
 from django.utils import timezone
 from .process_mail import send_my_mail
 from django.conf import settings
+
 
 # post and get volunteers
 @api_view(['POST'])
@@ -23,16 +27,18 @@ def add_volunteer(request):
     if serializer.is_valid():
         serializer.save()
         send_my_mail(f"New Volunteer", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"":""},"default_templates/new_volunteer.html")
+                     {"": ""}, "default_templates/new_volunteer.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_volunteers(request):
     volunteers = Volunteer.objects.all().order_by('-date_volunteered')
-    serializer = VolunteerSerializer(volunteers,many=True)
+    serializer = VolunteerSerializer(volunteers, many=True)
     return Response(serializer.data)
+
 
 # post and get events
 @api_view(['POST'])
@@ -44,11 +50,12 @@ def add_event(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_events(request):
     events = Events.objects.all().order_by('-date_posted')[:1]
-    serializer = EventsSerializer(events,many=True)
+    serializer = EventsSerializer(events, many=True)
     return Response(serializer.data)
 
 
@@ -64,29 +71,14 @@ def add_partner(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_partners(request):
     partners = Partnership.objects.all().order_by('-date_posted')
-    serializer = PartnershipSerializer(partners,many=True)
+    serializer = PartnershipSerializer(partners, many=True)
     return Response(serializer.data)
 
-# post and get news
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
-def add_news_update(request):
-    serializer = NewsUpdateSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def get_news_update(request):
-    news = NewsUpdate.objects.all().order_by('-date_posted')
-    serializer = NewsUpdateSerializer(news,many=True)
-    return Response(serializer.data)
 
 # post and get gallery
 @api_view(['POST'])
@@ -98,12 +90,14 @@ def add_to_gallery(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_gallery_list(request):
     gallery = Gallery.objects.all().order_by('-date_posted')
-    serializer = GallerySerializer(gallery,many=True)
+    serializer = GallerySerializer(gallery, many=True)
     return Response(serializer.data)
+
 
 # post and get contact us
 @api_view(['POST'])
@@ -117,31 +111,14 @@ def add_to_contacts(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
 def get_contact_list(request):
     contacts = ContactUs.objects.all().order_by('-date_contacted')
-    serializer = ContactUsSerializer(contacts,many=True)
+    serializer = ContactUsSerializer(contacts, many=True)
     return Response(serializer.data)
 
-# post and get Review
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
-def add_to_reviews(request):
-    serializer = ReviewSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        send_my_mail(f"New Review", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/review.html")
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def get_review_list(request):
-    reviews = Reviews.objects.all().order_by('-date_posted')
-    serializer = ReviewSerializer(reviews,many=True)
-    return Response(serializer.data)
 
 # post and get report
 @api_view(['POST'])
@@ -155,12 +132,14 @@ def add_reports(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_report_list(request):
     reports = Report.objects.all().order_by('-date_posted')
-    serializer = ReportSerializer(reports,many=True)
+    serializer = ReportSerializer(reports, many=True)
     return Response(serializer.data)
+
 
 # post and get post
 @api_view(['POST'])
@@ -172,12 +151,14 @@ def add_to_posts(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_post_list(request):
     posts = Post.objects.all().order_by('-date_posted')
-    serializer = PostSerializer(posts,many=True)
+    serializer = PostSerializer(posts, many=True)
     return Response(serializer.data)
+
 
 # post and get clients
 @api_view(['POST'])
@@ -191,12 +172,14 @@ def add_client(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_client_list(request):
     clients = ClientInfoProgress.objects.all().order_by('-date_issued')
-    serializer = ClientInfoProgressSerializer(clients,many=True)
+    serializer = ClientInfoProgressSerializer(clients, many=True)
     return Response(serializer.data)
+
 
 # post and get check ins
 @api_view(['POST'])
@@ -208,12 +191,14 @@ def check_in(request):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def get_check_in_lists(request):
     check_ins = UsersCheckedIn.objects.all().order_by('-date_checked_in')
-    serializer = UserCheckInSerializer(check_ins,many=True)
+    serializer = UserCheckInSerializer(check_ins, many=True)
     return Response(serializer.data)
+
 
 @api_view(['GET', 'PUT'])
 @permission_classes([permissions.AllowAny])
@@ -227,18 +212,3 @@ def update_client(request, id):
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['POST'])
-@permission_classes([permissions.AllowAny])
-def add_story(request):
-    serializer = StoriesSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def get_stories(request):
-    stories = Stories.objects.all().order_by('-date_posted')
-    serializer = StoriesSerializer(stories,many=True)
-    return Response(serializer.data)

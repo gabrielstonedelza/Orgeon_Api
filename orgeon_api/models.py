@@ -236,6 +236,7 @@ class Volunteer(models.Model):
             return "http://127.0.0.1:8000" + self.photo.url
         return ""
 
+
 class Events(models.Model):
     theme = models.CharField(max_length=200)
     venue = models.CharField(max_length=150)
@@ -258,6 +259,7 @@ class Events(models.Model):
         if self.event_poster:
             return "http://127.0.0.1:8000" + self.event_poster.url
 
+
 class Partnership(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
@@ -267,20 +269,14 @@ class Partnership(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-class NewsUpdate(models.Model):
-    title = models.CharField(max_length=150)
-    message = models.TextField()
-    date_posted = models.DateTimeField(default=timezone.now)
-
-    def __str__(self):
-        return f"{self.title}"
 
 class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     report = models.TextField()
     has_read = models.ManyToManyField(User, related_name="has_read_report", blank=True)
-    report_doc = models.FileField(upload_to="report_documents", blank=True,validators=[FileExtensionValidator(allowed_extensions=supported_files)])
+    report_doc = models.FileField(upload_to="report_documents", blank=True,
+                                  validators=[FileExtensionValidator(allowed_extensions=supported_files)])
     slug = models.SlugField(max_length=100, default='')
     date_posted = models.DateTimeField(default=timezone.now)
 
@@ -295,8 +291,9 @@ class Report(models.Model):
     def get_absolute_url(self):
         return f"/{self.slug}/"
 
+
 class Post(models.Model):
-    author =  models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_user')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_user')
     title = models.CharField(max_length=200)
     message = models.TextField()
     views = models.IntegerField(default=0)
@@ -316,6 +313,7 @@ class Post(models.Model):
     def get_absolute_url(self):
         return f"/{self.slug}/"
 
+
 class Gallery(models.Model):
     image_caption = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to="galleries")
@@ -329,6 +327,7 @@ class Gallery(models.Model):
             return "http://127.0.0.1:8000" + self.image.url
         return ""
 
+
 class ContactUs(models.Model):
     name = models.CharField(max_length=50)
     email = models.EmailField()
@@ -338,6 +337,7 @@ class ContactUs(models.Model):
 
     def __str__(self):
         return f"{self.name}"
+
 
 class ClientInfoProgress(models.Model):
     care_plan = models.CharField(max_length=20, choices=CARE_PLAN, default="Eagle")
@@ -351,7 +351,7 @@ class ClientInfoProgress(models.Model):
     client_image = models.ImageField(upload_to="client_images", blank=True, default="client.jpg")
     next_of_kin = models.CharField(max_length=50, blank=True)
     issue = models.TextField()
-    progress = models.CharField(choices=LEVEL_CHOICES, max_length=30,default="Assessment")
+    progress = models.CharField(choices=LEVEL_CHOICES, max_length=30, default="Assessment")
     assessment_phase_details = models.TextField(blank=True)
     development_phase_details = models.TextField(blank=True)
     planning_phase_details = models.TextField(blank=True)
@@ -372,29 +372,12 @@ class ClientInfoProgress(models.Model):
     def get_absolute_url(self):
         return f"/{self.slug}/"
 
-class Reviews(models.Model):
-    name = models.CharField(max_length=100)
-    review_content = models.TextField(max_length=400)
-    ratings = models.IntegerField(choices=RATING_CHOICES, default=5)
-    date_posted = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"New review from {self.name}"
 
 class UsersCheckedIn(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    checked_in = models.ManyToManyField(User,related_name="user_checking_in")
+    checked_in = models.ManyToManyField(User, related_name="user_checking_in")
     check_date = models.DateField(auto_now_add=True)
     date_checked_in = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} just checked in "
-
-class Stories(models.Model):
-    youtube_link = models.CharField(max_length=350)
-    date_posted = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.youtube_link
-
-
