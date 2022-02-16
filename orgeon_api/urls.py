@@ -24,4 +24,9 @@ urlpatterns = [
     path('update_client/<int:id>/', views.update_client),
     path('check_in/', views.check_in),
     path('get_check_in_lists/', views.get_check_in_lists),
+
+    path('get_user_notifications/', views.get_user_notifications),
+    path('get_all_user_notifications/', views.get_all_user_notifications),
+    path('get_triggered_notifications/', views.get_triggered_notifications),
+    path("read_notification/<int:id>/", views.read_notification),
 ]

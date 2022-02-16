@@ -4,7 +4,7 @@ from django.conf import settings
 from .models import (Volunteer, Partnership, Post, Report, ContactUs, Notifications, ClientInfoProgress, UsersCheckedIn)
 
 User = settings.AUTH_USER_MODEL
-from orgeon_users.models import User
+from orgeon_users.models import User as orgeonusers
 
 
 @receiver(post_save, sender=Volunteer)
@@ -69,7 +69,7 @@ def alert_client_progress(sender, created, instance, **kwargs):
 
     if created:
         Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
-                                     notification_title=title, notification_message=message, user=instance.user,
+                                     notification_title=title, notification_message=message, user=instance.assessment_officer,
                                      user2=admin_user,
                                      client_id=instance.id)
 
@@ -79,10 +79,12 @@ def alert_post_from_admin(sender, created, instance, **kwargs):
     title = f"New post from {instance.author}"
     notification_tag = "Posts"
     message = f"{instance.title}"
-    users = User.objects.exclude(id=1)
+    admin_user = orgeonusers.objects.get(id=1)
+    users = orgeonusers.objects.exclude(id=admin_user.id)
 
     if created:
         for i in users:
             Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
-                                         notification_title=title, notification_message=message, user=i,
+                                         notification_title=title, notification_message=message, user=admin_user,
+                                         user2=i,
                                          posts_id=instance.id)

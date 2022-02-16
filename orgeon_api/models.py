@@ -300,19 +300,10 @@ class Post(models.Model):
     views = models.IntegerField(default=0)
     has_read = models.ManyToManyField(User, related_name="has_read_post", blank=True)
     need_replies = models.BooleanField(default=False)
-    slug = models.SlugField(max_length=100, default='')
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.title}"
-
-    def save(self, *args, **kwargs):
-        value = self.title
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
-
-    def get_absolute_url(self):
-        return f"/{self.slug}/"
 
 
 class Gallery(models.Model):

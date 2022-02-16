@@ -223,3 +223,39 @@ def update_client(request, id):
                      {"": ""}, "default_templates/client_update.html")
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_all_user_notifications(request):
+    notifications = Notifications.objects.filter(user2=request.user).order_by('-date_created')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_user_notifications(request):
+    notifications = Notifications.objects.filter(user2=request.user).filter(read="Not Read").order_by('-date_created')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_triggered_notifications(request):
+    notifications = Notifications.objects.filter(user2=request.user).filter(notification_trigger="Triggered").filter(
+        read="Not Read").order_by('-date_created')
+    serializer = NotificationSerializer(notifications, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET', 'PUT'])
+@permission_classes([permissions.IsAuthenticated])
+def read_notification(request, id):
+    notification = get_object_or_404(Notifications, id=id)
+    serializer = NotificationSerializer(notification, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
