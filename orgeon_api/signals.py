@@ -12,7 +12,7 @@ def alert_volunteer_created(sender, created, instance, **kwargs):
     title = f"Got new Volunteer"
     notification_tag = "Volunteer"
     message = f"{instance.name} just volunteered for Orgeon"
-    admin_user = User.objects.get(id=1)
+    admin_user = orgeonusers.objects.get(id=1)
 
     if created:
         Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
@@ -25,7 +25,7 @@ def alert_partner_created(sender, created, instance, **kwargs):
     title = f"Got new Partner"
     notification_tag = "Partnership"
     message = f"{instance.name} wants to partner with Orgeon"
-    admin_user = User.objects.get(id=1)
+    admin_user = orgeonusers.objects.get(id=1)
 
     if created:
         Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
@@ -38,7 +38,7 @@ def alert_contact_message(sender, created, instance, **kwargs):
     title = f"Got new message from {instance.name}"
     notification_tag = "Contact"
     message = f"{instance.name} sent a message to Orgeon"
-    admin_user = User.objects.get(id=1)
+    admin_user = orgeonusers.objects.get(id=1)
 
     if created:
         Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
