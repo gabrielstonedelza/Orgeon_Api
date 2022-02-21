@@ -40,6 +40,47 @@ def get_volunteers(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def volunteer_detail(request, id):
+    volunteer = get_object_or_404(Volunteer, id=id)
+    serializer = VolunteerSerializer(volunteer, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([permissions.AllowAny])
+def delete_volunteer(request, id):
+    try:
+        volunteer = get_object_or_404(Volunteer, id=id)
+        volunteer.delete()
+
+    except Volunteer.DoesNotExist:
+        return Http404
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# partner detail and deletion
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def partner_detail(request, id):
+    partner = get_object_or_404(Partnership, id=id)
+    serializer = PartnershipSerializer(partner, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['GET', 'DELETE'])
+@permission_classes([permissions.AllowAny])
+def delete_partner(request, id):
+    try:
+        partner = get_object_or_404(Partnership, id=id)
+        partner.delete()
+
+    except Partner.DoesNotExist:
+        return Http404
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 # post and get events
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])

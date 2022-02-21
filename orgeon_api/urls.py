@@ -5,10 +5,14 @@ from . import views
 urlpatterns = [
     path('add_volunteer/', views.add_volunteer),
     path('get_volunteers/', views.get_volunteers),
+    path('volunteer_detail/<int:id>/', views.volunteer_detail),
+    path('delete_volunteer/<int:id>/', views.delete_volunteer),
     path('add_event/', views.add_event),
     path('get_events/', views.get_events),
     path('add_partner/', views.add_partner),
     path('get_partners/', views.get_partners),
+    path('partner_detail/<int:id>/', views.partner_detail),
+    path('delete_partner/<int:id>/', views.delete_partner),
 
     path('add_to_gallery/', views.add_to_gallery),
     path('get_gallery_list/', views.get_gallery_list),
