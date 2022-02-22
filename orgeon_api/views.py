@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
 
 from .models import (Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress,
-                     UsersCheckedIn)
+                     UsersCheckedIn,
+                     PostComments, LikePost, ReportComments)
 
 from .serializers import (VolunteerSerializer, EventsSerializer, PartnershipSerializer,
                           ReportSerializer, PostSerializer, GallerySerializer, ContactUsSerializer,
-                          ClientInfoProgressSerializer, UserCheckInSerializer)
+                          ClientInfoProgressSerializer, UserCheckInSerializer, PostCommentSerializer,
+                          LikePostSerializer, ReportCommentsSerializer)
 
 from datetime import datetime, date, time, timedelta
 from rest_framework.decorators import api_view, permission_classes
@@ -19,6 +21,62 @@ from .process_mail import send_my_mail
 from django.conf import settings
 
 
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def add_post_comment(request):
+    serializer = PostCommentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def add_report_comment(request):
+    serializer = ReportCommentsSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def like_post(request, id):
+    post = get_object_or_404(LikePost, id=id)
+    if not post.likes.filter(id=request.user.id).exists():
+        serializer = LikePostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_post_comments(request):
+    post_comments = PostComments.objects.all().order_by('-date_created')
+    serializer = PostCommentSerializer(post_comments, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_repost_comments(request):
+    report_comments = ReportComments.objects.all().order_by('-date_created')
+    serializer = ReportCommentsSerializer(report_comments, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_post_likes(request):
+    post_likes = LikePost.objects.all().order_by('-date_liked')
+    serializer = LikePostSerializer(post_likes, many=True)
+    return Response(serializer.data)
+
+
 # post and get volunteers
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
@@ -26,8 +84,6 @@ def add_volunteer(request):
     serializer = VolunteerSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        send_my_mail(f"New Volunteer", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/new_volunteer.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

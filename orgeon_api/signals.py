@@ -1,7 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.conf import settings
-from .models import (Volunteer, Partnership, Post, Report, ContactUs, Notifications, ClientInfoProgress, UsersCheckedIn)
+from .models import (Volunteer, Partnership, Post, Report, ContactUs, Notifications, ClientInfoProgress, UsersCheckedIn,
+                     PostComments, LikePost, ReportComments)
 
 User = settings.AUTH_USER_MODEL
 from orgeon_users.models import User as orgeonusers
@@ -51,13 +52,14 @@ def alert_new_report(sender, created, instance, **kwargs):
     title = f"New report from {instance.user.username}"
     notification_tag = "Report"
     message = f"{instance.title}"
-    admin_user = User.objects.get(id=1)
+    users = orgeonusers.objects.exclude(id=instance.user.id)
 
     if created:
-        Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
-                                     notification_title=title, notification_message=message, user=instance.user,
-                                     user2=admin_user,
-                                     report_id=instance.id)
+        for i in users:
+            Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
+                                         notification_title=title, notification_message=message, user=instance.user,
+                                         user2=i,
+                                         report_id=instance.id)
 
 
 @receiver(post_save, sender=ClientInfoProgress)
@@ -65,17 +67,18 @@ def alert_client_progress(sender, created, instance, **kwargs):
     title = f"Update on Client"
     notification_tag = "Client"
     message = f"A client was added or updated"
-    admin_user = User.objects.get(id=1)
+    admin_user = orgeonusers.objects.get(id=1)
 
     if created:
         Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
-                                     notification_title=title, notification_message=message, user=instance.assessment_officer,
+                                     notification_title=title, notification_message=message,
+                                     user=instance.assessment_officer,
                                      user2=admin_user,
                                      client_id=instance.id)
 
 
 @receiver(post_save, sender=Post)
-def alert_post_from_admin(sender, created, instance, **kwargs):
+def alert_post_from_employees(sender, created, instance, **kwargs):
     title = f"New post from {instance.author}"
     notification_tag = "Posts"
     message = f"{instance.title}"
@@ -86,5 +89,50 @@ def alert_post_from_admin(sender, created, instance, **kwargs):
         for i in users:
             Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
                                          notification_title=title, notification_message=message, user=admin_user,
+                                         user2=i,
+                                         posts_id=instance.id)
+
+
+@receiver(post_save, sender=PostComments)
+def alert_post_comments(sender, created, instance, **kwargs):
+    title = f"New post comment"
+    notification_tag = "Post_Comment"
+    message = f"{instance.user.username} commented on  post '{instance.post.title}'"
+    users = orgeonusers.objects.exclude(id=admin_user.id)
+
+    if created:
+        for i in users:
+            Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
+                                         notification_title=title, notification_message=message, user=instance.user,
+                                         user2=i,
+                                         posts_id=instance.id)
+
+
+@receiver(post_save, sender=LikePost)
+def alert_liked_post(sender, created, instance, **kwargs):
+    title = f"New post like"
+    notification_tag = "Post_Like"
+    message = f"{instance.user.username} liked post '{instance.post.title}'"
+    users = orgeonusers.objects.exclude(id=admin_user.id)
+
+    if created:
+        for i in users:
+            Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
+                                         notification_title=title, notification_message=message, user=instance.user,
+                                         user2=i,
+                                         posts_id=instance.id)
+
+
+@receiver(post_save, sender=ReportComments)
+def alert_report_comments(sender, created, instance, **kwargs):
+    title = f"New report comment"
+    notification_tag = "Report_Comment"
+    message = f"{instance.user.username} commented on report '{instance.report.title}'"
+    users = orgeonusers.objects.exclude(id=admin_user.id)
+
+    if created:
+        for i in users:
+            Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
+                                         notification_title=title, notification_message=message, user=instance.user,
                                          user2=i,
                                          posts_id=instance.id)

@@ -298,12 +298,40 @@ class Post(models.Model):
     title = models.CharField(max_length=200)
     message = models.TextField()
     views = models.IntegerField(default=0)
-    has_read = models.ManyToManyField(User, related_name="has_read_post", blank=True)
-    need_replies = models.BooleanField(default=False)
     date_posted = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"{self.title}"
+
+
+class PostComments(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_commenting")
+    comment = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment of {self.post.title}"
+
+
+class LikePost(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_liking_post")
+    likes = models.ManyToManyField(User, related_name="post_likes", blank=True)
+    date_liked = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} liked {self.post.title}"
+
+
+class ReportComments(models.Model):
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_commenting_on_report")
+    comment = models.TextField()
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Comment of {self.report.title}"
 
 
 class Gallery(models.Model):
@@ -396,4 +424,3 @@ class Notifications(models.Model):
 
     def __str__(self):
         return self.notification_title
-

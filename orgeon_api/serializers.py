@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Volunteer, Events, Partnership, Report, Post, Gallery, ContactUs, ClientInfoProgress, \
-                     UsersCheckedIn, Notifications)
+                     UsersCheckedIn, Notifications, PostComments, LikePost, ReportComments)
 
 
 class VolunteerSerializer(serializers.ModelSerializer):
@@ -41,7 +41,7 @@ class PostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ['id', 'author', 'username', 'title', 'message', 'views', 'has_read', 'need_replies',
+        fields = ['id', 'author', 'username', 'title', 'message', 'views',
                   'date_posted']
         read_only_fields = ['author']
 
@@ -98,7 +98,8 @@ class NotificationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Notifications
-        fields = ['id', 'notification_id', 'notification_title', 'notification_tag', 'notification_message', 'read', 'notification_trigger',
+        fields = ['id', 'notification_id', 'notification_title', 'notification_tag', 'notification_message', 'read',
+                  'notification_trigger',
                   'user', 'user2', 'username', 'username2', 'volunteer_id', 'partner_id', 'contact_id', 'report_id',
                   'client_id', 'posts_id',
                   'checked_in_id', 'date_created']
@@ -110,3 +111,42 @@ class NotificationSerializer(serializers.ModelSerializer):
     def get_username2(self, user):
         username2 = user.user2.username
         return username2
+
+
+class PostCommentSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField('get_username')
+
+    class Meta:
+        model = PostComments
+        fields = ['id', 'post', 'user', 'username', 'comment', 'date_created']
+        read_only_fields = ['user']
+
+    def get_username(self, user):
+        username = user.user.username
+        return username
+
+
+class LikePostSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField('get_username')
+
+    class Meta:
+        model = LikePost
+        fields = ['id', 'post', 'user', 'username', 'likes', 'date_liked']
+        read_only_fields = ['user']
+
+    def get_username(self, user):
+        username = user.user.username
+        return username
+
+
+class ReportCommentsSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField('get_username')
+
+    class Meta:
+        model = ReportComments
+        fields = ['id', 'report', 'user', 'comment', 'date_created']
+        read_only_fields = ['user']
+
+    def get_username(self, user):
+        username = user.user.username
+        return username
