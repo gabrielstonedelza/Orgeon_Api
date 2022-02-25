@@ -21,6 +21,7 @@ urlpatterns = [
 
     path('add_reports/', views.add_reports),
     path('get_report_list/', views.get_report_list),
+    path('report_detail/<int:id>/', views.report_detail),
     path('add_to_posts/', views.add_to_posts),
     path('get_post_list/', views.get_post_list),
     path('add_client/', views.add_client),
@@ -34,10 +35,11 @@ urlpatterns = [
     path('get_triggered_notifications/', views.get_triggered_notifications),
     path("read_notification/<int:id>/", views.read_notification),
 
-    path('add_post_comment/', views.add_post_comment),
-    path('add_reports_comment/', views.add_report_comment),
-    path('like_post/', views.like_post),
+    path('add_post_comment/<int:id>/', views.add_post_comment),
+    path('add_reports_comment/<int:id>/', views.add_report_comment),
+    path('get_all_report_comments/<int:id>/', views.get_all_report_comment),
+
     path('get_post_comments/', views.get_post_comments),
     path('get_report_comments/', views.get_repost_comments),
-    path('get_post_likes/', views.get_post_likes),
+
 ]

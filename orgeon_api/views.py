@@ -21,36 +21,35 @@ from .process_mail import send_my_mail
 from django.conf import settings
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([permissions.IsAuthenticated])
-def add_post_comment(request):
+def add_post_comment(request, id):
+    post = get_object_or_404(Post, id=id)
     serializer = PostCommentSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(user=request.user)
+        serializer.save(user=request.user, post=post)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([permissions.IsAuthenticated])
-def add_report_comment(request):
+def add_report_comment(request, id):
+    report = get_object_or_404(Report, id=id)
     serializer = ReportCommentsSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save(user=request.user)
+        serializer.save(user=request.user, report=report)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
-def like_post(request, id):
-    post = get_object_or_404(LikePost, id=id)
-    if not post.likes.filter(id=request.user.id).exists():
-        serializer = LikePostSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save(user=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def get_all_report_comment(request, id):
+    report = get_object_or_404(Report, id=id)
+    report_comments = ReportComments.objects.filter(report=report)
+    serializer = ReportCommentsSerializer(report_comments, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
@@ -66,14 +65,6 @@ def get_post_comments(request):
 def get_repost_comments(request):
     report_comments = ReportComments.objects.all().order_by('-date_created')
     serializer = ReportCommentsSerializer(report_comments, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def get_post_likes(request):
-    post_likes = LikePost.objects.all().order_by('-date_liked')
-    serializer = LikePostSerializer(post_likes, many=True)
     return Response(serializer.data)
 
 
@@ -163,8 +154,8 @@ def add_partner(request):
     serializer = PartnershipSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        send_my_mail(f"New Partner", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/new_partnership.html")
+        # send_my_mail(f"New Partner", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
+        #              {"": ""}, "default_templates/new_partnership.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -203,8 +194,8 @@ def add_to_contacts(request):
     serializer = ContactUsSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
-        send_my_mail(f"New Contact Message", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/contact.html")
+        # send_my_mail(f"New Contact Message", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
+        #              {"": ""}, "default_templates/contact.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -224,8 +215,8 @@ def add_reports(request):
     serializer = ReportSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(user=request.user)
-        send_my_mail(f"New Report", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/report.html")
+        # send_my_mail(f"New Report", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
+        #              {"": ""}, "default_templates/report.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -243,10 +234,7 @@ def get_report_list(request):
 @permission_classes([permissions.IsAuthenticated])
 def report_detail(request, id):
     report = get_object_or_404(Report, id=id)
-    if report:
-        report.views += 1
-        report.save()
-    serializer = ReportSerializer(event, many=False)
+    serializer = ReportSerializer(report, many=False)
     return Response(serializer.data)
 
 
@@ -276,8 +264,8 @@ def add_client(request):
     serializer = ClientInfoProgressSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(assessment_officer=request.user)
-        send_my_mail(f"New Client", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/client.html")
+        # send_my_mail(f"New Client", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
+        #              {"": ""}, "default_templates/client.html")
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -316,8 +304,8 @@ def update_client(request, id):
     serializer = ClientInfoProgressSerializer(client, data=request.data)
     if serializer.is_valid():
         serializer.save(user=request.user)
-        send_my_mail(f"Client Updated", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
-                     {"": ""}, "default_templates/client_update.html")
+        # send_my_mail(f"Client Updated", settings.EMAIL_HOST_USER, "gabrielstonedelza@gmail.com",
+        #              {"": ""}, "default_templates/client_update.html")
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

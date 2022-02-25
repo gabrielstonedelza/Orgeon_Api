@@ -283,11 +283,8 @@ class Report(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
     report = models.TextField()
-    has_read = models.ManyToManyField(User, related_name="has_read_report", blank=True)
-    report_doc = models.FileField(upload_to="report_documents", blank=True,
-                                  validators=[FileExtensionValidator(allowed_extensions=supported_files)])
-    views = models.IntegerField(default=0)
-    date_posted = models.DateTimeField(default=timezone.now)
+    date_posted = models.DateField(auto_now_add=True)
+    time_posted = models.TimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username}'s report = {self.title}"
@@ -309,6 +306,7 @@ class PostComments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_commenting")
     comment = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
+    time_created = models.TimeField(default=timezone.now)
 
     def __str__(self):
         return f"Comment of {self.post.title}"
@@ -329,6 +327,7 @@ class ReportComments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_commenting_on_report")
     comment = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
+    time_created = models.TimeField(default=timezone.now)
 
     def __str__(self):
         return f"Comment of {self.report.title}"

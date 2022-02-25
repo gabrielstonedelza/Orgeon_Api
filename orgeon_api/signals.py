@@ -83,7 +83,7 @@ def alert_post_from_employees(sender, created, instance, **kwargs):
     notification_tag = "Posts"
     message = f"{instance.title}"
     admin_user = orgeonusers.objects.get(id=1)
-    users = orgeonusers.objects.exclude(id=admin_user.id)
+    users = orgeonusers.objects.exclude(id=instance.user.id)
 
     if created:
         for i in users:
@@ -98,7 +98,7 @@ def alert_post_comments(sender, created, instance, **kwargs):
     title = f"New post comment"
     notification_tag = "Post_Comment"
     message = f"{instance.user.username} commented on  post '{instance.post.title}'"
-    users = orgeonusers.objects.exclude(id=admin_user.id)
+    users = orgeonusers.objects.exclude(id=instance.user.id)
 
     if created:
         for i in users:
@@ -113,7 +113,7 @@ def alert_liked_post(sender, created, instance, **kwargs):
     title = f"New post like"
     notification_tag = "Post_Like"
     message = f"{instance.user.username} liked post '{instance.post.title}'"
-    users = orgeonusers.objects.exclude(id=admin_user.id)
+    users = orgeonusers.objects.exclude(id=instance.user.id)
 
     if created:
         for i in users:
@@ -128,11 +128,11 @@ def alert_report_comments(sender, created, instance, **kwargs):
     title = f"New report comment"
     notification_tag = "Report_Comment"
     message = f"{instance.user.username} commented on report '{instance.report.title}'"
-    users = orgeonusers.objects.exclude(id=admin_user.id)
+    users = orgeonusers.objects.exclude(id=instance.user.id)
 
     if created:
         for i in users:
             Notifications.objects.create(notification_id=instance.id, notification_tag=notification_tag,
                                          notification_title=title, notification_message=message, user=instance.user,
                                          user2=i,
-                                         posts_id=instance.id)
+                                         report_id=instance.id)

@@ -28,7 +28,7 @@ class ReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ['id', 'user', 'username', 'title', 'report', 'has_read', 'report_doc', 'views', 'date_posted']
+        fields = ['id', 'user', 'username', 'title', 'report', 'date_posted','time_posted']
         read_only_fields = ['user']
 
     def get_username(self, user):
@@ -118,8 +118,8 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PostComments
-        fields = ['id', 'post', 'user', 'username', 'comment', 'date_created']
-        read_only_fields = ['user']
+        fields = ['id', 'post', 'user', 'username', 'comment', 'date_created','time_created']
+        read_only_fields = ['user', 'post']
 
     def get_username(self, user):
         username = user.user.username
@@ -132,7 +132,7 @@ class LikePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = LikePost
         fields = ['id', 'post', 'user', 'username', 'likes', 'date_liked']
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'post']
 
     def get_username(self, user):
         username = user.user.username
@@ -144,8 +144,8 @@ class ReportCommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ReportComments
-        fields = ['id', 'report', 'user', 'comment', 'date_created']
-        read_only_fields = ['user']
+        fields = ['id', 'report', 'user', 'username', 'comment', 'date_created','time_created']
+        read_only_fields = ['user', 'report']
 
     def get_username(self, user):
         username = user.user.username
