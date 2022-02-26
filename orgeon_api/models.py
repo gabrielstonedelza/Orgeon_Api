@@ -242,7 +242,7 @@ class Volunteer(models.Model):
 
     def get_volunteer_photo(self):
         if self.photo:
-            return "http://127.0.0.1:8000" + self.photo.url
+            return "https://orgeonofstars.xyz" + self.photo.url
         return ""
 
 
@@ -266,7 +266,7 @@ class Events(models.Model):
 
     def get_event_poster(self):
         if self.event_poster:
-            return "http://127.0.0.1:8000" + self.event_poster.url
+            return "https://orgeonofstars.xyz" + self.event_poster.url
 
 
 class Partnership(models.Model):
@@ -341,7 +341,7 @@ class Gallery(models.Model):
 
     def get_gallery_item(self):
         if self.image:
-            return "http://127.0.0.1:8000" + self.image.url
+            return "https://orgeonofstars.xyz" + self.image.url
         return ""
 
 

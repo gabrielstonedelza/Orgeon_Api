@@ -39,12 +39,12 @@ class Profile(models.Model):
 
     def user_profile_pic(self):
         if self.profile_pic:
-            return "127.0.0.1" + self.profile_pic.url
+            return "https://orgeonofstars.xyz" + self.profile_pic.url
 
         return ''
 
     def user_cover_pic(self):
         if self.cover_pic:
-            return "127.0.0.1" + self.cover_pic.url
+            return "https://orgeonofstars.xyz" + self.cover_pic.url
 
         return ''
