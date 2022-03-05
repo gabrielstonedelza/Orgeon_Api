@@ -242,7 +242,7 @@ class Volunteer(models.Model):
 
     def get_volunteer_photo(self):
         if self.photo:
-            return "https://orgeonofstars.xyz" + self.photo.url
+            return "https://www.orgeonofstars.xyz" + self.photo.url
         return ""
 
 
